@@ -1,0 +1,75 @@
+checkpoints_root: /srv/checkpoints/xray
+
+gpus: [6,7]
+auto_lr_find: False
+min_epochs: 100
+max_epochs: 200
+val_check_interval: 1
+check_val_every_n_epoch: 10
+precision: '16-mixed'
+
+#model params
+num_classes: 7
+image_size: 512
+architecture: 'tf_efficientdet_lite3'
+backbone: 'efficientnet_b0' 
+freeze: 0 
+
+
+from_ckpt: False
+ckpt: "/srv/checkpoints/xray/"
+
+
+optimizer: torch.optim.AdamW
+lr: 0.0003
+w_d: 0.001
+
+
+scheduler_step: torch.optim.lr_scheduler.StepLR
+scheduler_step_kwargs:
+  step_size: 10
+  gamma: 0.8
+
+scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau
+scheduler_kwargs:
+  factor: 0.5 
+  patience: 4
+  mode: max
+scheduler_interval: epoch
+scheduler_monitor: val_map
+
+datamodule:
+  _target_: src.data.datamodule.XrayData
+  xray_dir: '/data1/xray_data/images'
+  vin_dir: '/data1/xray_data/vinbig/vinbigdata/train'
+  annotations_root: '/home/kburovin/Projects/Kaggle/xray/dataset/'
+  only_xray: False
+  batch_size: 8
+
+
+logger:
+  _target_: pytorch_lightning.loggers.MLFlowLogger
+  experiment_name: Xray
+  tracking_uri: http://127.0.0.1:5000
+
+callbacks:
+  early_stopping:
+    _target_: pytorch_lightning.callbacks.EarlyStopping
+    monitor: val_map
+    min_delta: 0
+    patience: 10
+    verbose: True
+    mode: max
+
+  model_checkpoint:
+    _target_: pytorch_lightning.callbacks.ModelCheckpoint
+    verbose: true
+    mode: max
+    monitor: val_map
+    save_top_k: 1
+    save_last: True
+    filename: best
+
+  lr_monitor:
+    _target_: pytorch_lightning.callbacks.LearningRateMonitor
+    logging_interval: epoch

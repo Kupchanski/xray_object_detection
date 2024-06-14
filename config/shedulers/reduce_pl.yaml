@@ -1,0 +1,7 @@
+scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau
+scheduler_kwargs:
+  factor: 0.5 
+  patience: 8
+  mode: min
+scheduler_interval: epoch
+scheduler_monitor: val_loss

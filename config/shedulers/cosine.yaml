@@ -1,0 +1,6 @@
+scheduler: torch.optim.lr_scheduler.CosineAnnealingLR
+scheduler_kwargs:
+  T_max: 10 
+  eta_min: 1e-7
+scheduler_interval: epoch
+scheduler_monitor: null
