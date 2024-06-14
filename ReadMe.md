@@ -9,8 +9,8 @@ The tools used in this work were:
  - Pytorch, Pytorch-lightning, Numpy, Hydra, MlFlow
 
  - For training I chose EfficientDet model (https://github.com/rwightman/efficientdet-pytorch).
- - В файле Data_exploration.ipynb - ноутбук с EDA
-  
+ - In Data_exploration.ipynb - jyputer notebook with EDA
+
 
 ## Couple output results
 
