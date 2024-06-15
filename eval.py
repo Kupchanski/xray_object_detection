@@ -1,28 +1,21 @@
-import os
-import glob
-import pandas as pd
-import numpy as np
 import torch
-import json
+import numpy as np
 from collections import OrderedDict
 from torch.utils.data import DataLoader
-
-import numpy as np 
-import pandas as pd 
-from glob import glob 
-import matplotlib.pyplot as plt
 from torchmetrics.classification import BinaryConfusionMatrix
-from torchmetrics.detection.mean_ap import MeanAveragePrecision
-from ensemble_boxes import weighted_boxes_fusion
 
 from src.data.dataset import XrayDataset
 from src.data.transforms import get_val_transforms
 from src.models.networks import create_model
 from effdet import  DetBenchPredict
 
-def load_from_checkpoint(model, checkpoint):
 
-    sd = torch.load(checkpoint)['state_dict'] 
+def load_from_checkpoint(
+    model,
+    checkpoint
+):
+
+    sd = torch.load(checkpoint)['state_dict']
     new_sd = OrderedDict()
     for k, v in sd.items():
         new_sd[k[8:]] = v
@@ -31,18 +24,33 @@ def load_from_checkpoint(model, checkpoint):
     return model
 
 
-def evaluate(model, dataloader, device, score_threshold=0.05, confusion_matrix_th=0.3):
+def evaluate(
+    model,
+    dataloader,
+    device,
+    confusion_matrix_th=0.3,
+):
+    """Evaluate test dataset function.
+
+    Args:
+        model: Your pretrained model
+        dataloader: pytorch dataloader with images and gt targets
+        device: where do you want to infer model, on gpu or cpu
+        confusion_matrix_th: Threshhold for metrics calculation. Defaults to 0.3.
+
+    Returns:
+        _type_: _description_
+    """
     confusion_matrix = BinaryConfusionMatrix()
     predictions = []
-    with torch.no_grad():      
+    with torch.no_grad():
         for image, targets in dataloader:
             model = model.to(device)
             outputs = model(image.float().to(device))
             for i in range(image.shape[0]):
-                boxes = outputs[i].detach().cpu().numpy()[:,:4]    
-                scores = outputs[i].detach().cpu().numpy()[:,4]
+                boxes = outputs[i].detach().cpu().numpy()[:, :4]
+                scores = outputs[i].detach().cpu().numpy()[:, 4]
                 labels = outputs[i].detach().cpu().numpy()[:, 5]
-                indexes = np.where(scores > score_threshold)[0]
                 max_index = np.argmax(scores)
                 boxes = boxes[max_index].reshape(1, -1)
                 scores = scores[max_index].reshape(1, -1)
@@ -64,22 +72,21 @@ def evaluate(model, dataloader, device, score_threshold=0.05, confusion_matrix_t
         tn, fp, fn, tp = conf_matrix.flatten()
         sensitivity = tp / (tp + fn)
         specificity = tn / (tn + fp)
-        print(f"Sensitivity: {sensitivity}")
-        print(f"Specificity: {specificity}")
+        print(f'Sensitivity: {sensitivity}')
+        print(f'Specificity: {specificity}')
 
     return [predictions]
 
 
 # Main script
 if __name__ == "__main__":
-    
-    image_folder_path = "/data1/xray_data/images"
+
+    image_folder_path = '/data1/xray_data/images'
     annotations_file = 'dataset/val_df.csv'
     eval_dataset = XrayDataset(image_folder_path, annotations_file, transforms=get_val_transforms())
-    evaloader = DataLoader(eval_dataset, batch_size = 1)
-    checkpoint = "/srv/checkpoints/xray/2024-06-14 16:17:09/best.ckpt"
-    device = "cuda:5" if torch.cuda.is_available() else "cpu"
-    
+    evaloader = DataLoader(eval_dataset, batch_size=1)
+    checkpoint = '/srv/checkpoints/xray/2024-06-14 16:17:09/best.ckpt'
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     net, config = create_model(
                 num_classes=7,
                 image_size=512,

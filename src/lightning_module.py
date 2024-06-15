@@ -1,12 +1,6 @@
 import torch
-import torchmetrics
-import random
-import numpy as np
-from typing import List, Dict
-from torch.functional import Tensor
-from torch.optim.optimizer import Optimizer
 import pytorch_lightning as pl
-from hydra.utils import instantiate, get_class
+from hydra.utils import  get_class
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 
 

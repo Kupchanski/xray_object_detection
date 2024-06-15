@@ -1,8 +1,10 @@
 import os
 import pytorch_lightning as pl
+from torch.utils.data import DataLoader, ConcatDataset
+
 from .dataset import XrayDataset, VinXrayDataset
 from .transforms import get_train_transforms, get_val_transforms
-from torch.utils.data import DataLoader, ConcatDataset
+
 
 class XrayData(pl.LightningDataModule):
     def __init__(self, 
