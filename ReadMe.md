@@ -51,3 +51,5 @@ At the end of the training we evaluate the model and calculate sensitivity speci
 
 5) Use special Pre-trained Models: Find pre-trained detectors on other medical data and use them as a starting point.
 
+6) Try some special techniques like: EMA, SWA, Mixup/Cutmix augmentations
+
