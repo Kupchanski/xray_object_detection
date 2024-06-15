@@ -14,7 +14,6 @@ def load_from_checkpoint(
     model,
     checkpoint
 ):
-
     sd = torch.load(checkpoint)['state_dict']
     new_sd = OrderedDict()
     for k, v in sd.items():
@@ -38,8 +37,8 @@ def evaluate(
         device: where do you want to infer model, on gpu or cpu
         confusion_matrix_th: Threshhold for metrics calculation. Defaults to 0.3.
 
-    Returns:
-        _type_: _description_
+        Prints Sensitivity and Specificity metrics to the terminal
+
     """
     confusion_matrix = BinaryConfusionMatrix()
     predictions = []
@@ -75,7 +74,6 @@ def evaluate(
         print(f'Sensitivity: {sensitivity}')
         print(f'Specificity: {specificity}')
 
-    return [predictions]
 
 
 # Main script
