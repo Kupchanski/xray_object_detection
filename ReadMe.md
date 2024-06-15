@@ -1,18 +1,17 @@
-## Xray disease detector
+## NIH Chest X-ray disease detector
 
-  The repository contains a pipeline for training a multi-class detection model (7 classes) for the task of detecting various diseases in chest X-rays.
-
+  This repository contains a pipeline for training a multi-class detection model (7 classes) for the task of detecting various diseases in chest X-rays.
+  Dataset link: https://nihcc.app.box.com/v/ChestXray-NIHCC/folder/36938765345
   
 
-The tools used in this work were:
+Tools used:
 
- - Pytorch, Pytorch-lightning, Numpy, Hydra, MlFlow
-
+ - Pytorch, Pytorch-lightning, Numpy, Hydra, MlFlow, Albumentations
  - For training I chose EfficientDet model (https://github.com/rwightman/efficientdet-pytorch).
  - In Data_exploration.ipynb - jyputer notebook with EDA
 
 
-## Couple output results
+## Example output results
 
 ![alt text](results/results3.png)
 ![alt text](results/results2.png)
@@ -20,21 +19,20 @@ The tools used in this work were:
 ![alt text](results/results4.png)
 ![alt text](results/results5.png)
 
-They are not perfect, but we can see that the model has begun to understand the consepts. 
+The results are not perfect, but we can see that the model has begun to understand the concepts. 
 
 ## During training optimized:
 
-Focal loss for classes,
+ - Focal loss:  for disbalanced classes better optimization
 
-bbox_loss - optimizes distance between bboxes
+ - bbox_loss - optimizes distance between bboxes
 
 Validation is done on 15 percent of the dataset using the mAP metric.
 
 ## Metrics: 
-At the end of the training we can do eval and calculate sensitivity specificity metrics. Sensitivity and specificity are particularly suitable for medical data because they provide crucial insights into the performance of diagnostic tests or models, which is very important for making informed medical decisions.
+At the end of the training we evaluate the model and calculate sensitivity specificity metrics. Sensitivity and specificity are particularly suitable for medical data because they provide crucial insights into the performance of diagnostic tests or models, which is very important for making informed medical decisions.
 
   
-
 **High Sensitivity**: A test with high sensitivity correctly identifies most of the patients who have the disease. This is crucial in medical scenarios where missing a positive case (false negative) could lead to serious consequences, such as delayed treatment or disease progression.
 
 **High Specificity**: A test with high specificity correctly identifies most of the patients who do not have the disease. This is important to avoid unnecessary treatments, anxiety, and further invasive diagnostic procedures.
@@ -43,13 +41,13 @@ At the end of the training we can do eval and calculate sensitivity specificity 
 
 ## How can the current pipelines be improved:
 
-1) Try other EfficientDet configurations (there are more than 50 of them) or other models (Detr, Detectron, Yolo ). As well as other image sizes.
+1) Experiment with Different Configurations: Try other EfficientDet configurations (there are more than 50 of them) or other models (DETR, Detectron, YOLO). Also, experiment with different image sizes.
 
-2) Take additional data from other datasets, mark up more photos by rare classes. In general, the task of training a good detector on 800 images for 8 classes is quite difficult. It is even possible to generate synthetic data.
+2) Extend the Dataset: Use additional data from other datasets and label more images for rare classes. Training a good detector on 800 images for 8 classes is challenging. Also we can try to generate synthetic data.
 
-3) Come up with a set of good augmentations, so far I have taken the most basic ones and only experimented a bit with augmentations.
+3) Develop Better Augmentations: Experiment with a variety of augmentations. So far, only the most basic augmentations have been used.
 
-4) Experiments with hyperparameters.
+4) Hyperparameter Tuning: Experiment with different hyperparameters to optimize the model.
 
-5) Trying to find pre-trained detectors on other medical data and take those as a starting point.
+5) Use special Pre-trained Models: Find pre-trained detectors on other medical data and use them as a starting point.
 
