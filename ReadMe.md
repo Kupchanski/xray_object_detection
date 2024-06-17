@@ -61,7 +61,7 @@ Moderate Sensitivity: While a sensitivity of 54.55% is better than random guessi
 
 Low Specificity: A specificity of 44.44% is quite low, suggesting that the model is generating a high number of false positives, which can lead to unnecessary follow-up procedures and treatments.
 
-As we can see from the current sensitivity and specificity values, this model has significant potential for improvement. Given that the sensitivity is 54.55% and the specificity is 44.44%, it can be concluded that the model requires substantial refinement to achieve higher accuracy and reliability.
+As we can see from the current sensitivity and specificity values, this model has significant potential for improvement.
 
 
 ## How can the current pipelines be improved:
