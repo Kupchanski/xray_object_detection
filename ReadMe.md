@@ -25,7 +25,7 @@ The results are not perfect, but we can see that the model has begun to understa
 
  - Focal loss:  for disbalanced classes better optimization
 
- - bbox_loss - optimizes distance between bboxes
+ - bbox_loss: optimizes distance between bboxes
 
 Validation is done on 15 percent of the dataset using the mAP metric.
 
@@ -54,12 +54,12 @@ python eval.py --image_folder_path /path/to/images --annotations_file /path/to/a
 ```
 
 now metrics are
- - Sensitivity: 0.5454545617103577 - A sensitivity of 54.55% means that the model correctly identifies about 
- - Specificity: 0.4444444477558136 -  A specificity of 44.44% means that the model correctly identifies about 44.44% of the healthy patients.
+ - Sensitivity: 0.5537: This means that approximately 55.37% of the actual positives are correctly identified by the model.
+ - Specificity: 0.4444:  A specificity of 44.44% means that the model correctly identifies about 44.44% of the healthy patients.
 
-Moderate Sensitivity: While a sensitivity of 54.55% is better than random guessing, it is generally not sufficient for medical applications, especially in cases where it is critical to identify as many positive cases as possible.
+While a sensitivity of 55.37% is better than random guessing, it is generally not sufficient for medical applications, especially in cases where it is critical to identify as many positive cases as possible.
 
-Low Specificity: A specificity of 44.44% is quite low, suggesting that the model is generating a high number of false positives, which can lead to unnecessary follow-up procedures and treatments.
+A specificity of 44.44% is quite low, suggesting that the model is generating a high number of false positives, which can lead to unnecessary follow-up procedures and treatments.
 
 As we can see from the current sensitivity and specificity values, this model has significant potential for improvement.
 
