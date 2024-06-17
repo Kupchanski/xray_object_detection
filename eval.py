@@ -1,13 +1,14 @@
 import torch
+import argparse
 import numpy as np
 from collections import OrderedDict
 from torch.utils.data import DataLoader
 from torchmetrics.classification import BinaryConfusionMatrix
+from effdet import  DetBenchPredict
 
 from src.data.dataset import XrayDataset
 from src.data.transforms import get_val_transforms
 from src.models.networks import create_model
-from effdet import  DetBenchPredict
 
 
 def load_from_checkpoint(
@@ -27,7 +28,7 @@ def evaluate(
     model,
     dataloader,
     device,
-    confusion_matrix_th=0.3,
+    confusion_matrix_th=0.4,
 ):
     """Evaluate test dataset function.
 
@@ -74,25 +75,39 @@ def evaluate(
         print(f'Sensitivity: {sensitivity}')
         print(f'Specificity: {specificity}')
 
+def main(args):
+    image_folder_path = args.image_folder_path
+    annotations_file = args.annotations_file
+    checkpoint = args.checkpoint
+    th = args.cm_threshold
 
-
-# Main script
-if __name__ == "__main__":
-
-    image_folder_path = '/data1/xray_data/images'
-    annotations_file = 'dataset/val_df.csv'
     eval_dataset = XrayDataset(image_folder_path, annotations_file, transforms=get_val_transforms())
     evaloader = DataLoader(eval_dataset, batch_size=1)
-    checkpoint = '/srv/checkpoints/xray/2024-06-14 16:17:09/best.ckpt'
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    net, config = create_model(
-                num_classes=7,
-                image_size=512,
-                architecture='tf_efficientdet_lite3',
-                backbone='efficientnet_b0',
-                train=False,
+
+    net, _ = create_model(
+        num_classes=args.num_classes,
+        image_size=args.image_size,
+        architecture=args.architecture,
+        backbone=args.backbone,
+        train=False,
     )
     model = DetBenchPredict(net)
     model = load_from_checkpoint(model, checkpoint)
 
-    evaluate(model, evaloader, device)
+    evaluate(model, evaloader, device, th)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Evaluate X-ray model')
+    parser.add_argument('--image_folder_path', type=str, default='/data1/xray_data/images', help='Path to the folder containing images')
+    parser.add_argument('--annotations_file', type=str, default='dataset/val_df.csv', help='Path to the annotations CSV file')
+    parser.add_argument('--checkpoint', type=str, default='/srv/checkpoints/xray/2024-06-16 21:43:41/best.ckpt', help='Path to the model checkpoint')
+    parser.add_argument('--cm_threshold', type=float, default=0.3, help='Threshold for confusion matrix predictions')
+    parser.add_argument('--num_classes', type=int, default=7, help='Number of classes')
+    parser.add_argument('--image_size', type=int, default=512, help='Image size')
+    parser.add_argument('--architecture', type=str, default='tf_efficientdet_lite3', help='Model architecture')
+    parser.add_argument('--backbone', type=str, default='efficientnet_b0', help='Backbone model')
+
+    args = parser.parse_args()
+    main(args)
